@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import todoRoutes from "./routes/ToDoRoutes.js";
+import { connectToDb } from "./DB/connectDb.js";
 
 dotenv.config();
 const app = express();
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
   res.send("Welcome");
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  await connectToDb();
   console.log(`Server is running on port ${PORT}`);
 });
