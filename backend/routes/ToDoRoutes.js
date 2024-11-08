@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createToDoList,
+  getToDoList,
   getToDoLists,
   removeToDoList,
   removeToDoLists,
@@ -10,6 +11,9 @@ import {
 const router = express.Router();
 // create one to-do list
 router.post("/create", createToDoList);
+
+// create one to-do list
+router.get("/getone/:id", getToDoList);
 
 // get all to-do lists
 router.get("/getall", getToDoLists);

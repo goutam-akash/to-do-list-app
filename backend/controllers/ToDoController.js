@@ -28,19 +28,19 @@ export const createToDoList = async (req, res) => {
   const currentDate = new Date().toISOString();
   const formattedDueDate = new Date(duedate).toISOString();
 
-  if (currentDate < formattedDueDate) {
+  console.log(currentDate, formattedDueDate, currentDate < formattedDueDate);
+
+  if (currentDate > formattedDueDate) {
     return res.status(400).json({ message: "Due date must be in the future." });
   }
-
-  console.log(currentDate, formattedDueDate, currentDate < formattedDueDate);
 
   try {
     await createTableIfNotExists();
     const result = await pool.query(
       `INSERT INTO todos (title, description, duedate, completed)
-        VALUES ('${title}', '${description}', '${formattedDueDate}', ${completed})
-        RETURNING id, title, description, duedate, completed, createdAt
-        ;`
+         VALUES ($1, $2, $3, $4)
+         RETURNING id, title, description, duedate, completed, createdAt;`,
+      [title, description, formattedDueDate, completed]
     );
     res.status(201).json({
       message: "To-do list created successfully.",
@@ -52,8 +52,39 @@ export const createToDoList = async (req, res) => {
   }
 };
 
+// get one to-do list
+export const getToDoList = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const result = await pool.query(
+      `SELECT id, title, description, duedate, completed, createdAt
+             FROM todos
+             WHERE id = $1;`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "To-do list not found." });
+    }
+
+    res.status(200).json({ data: result.rows[0] });
+  } catch (error) {
+    console.log("Error in getToDoList controller:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 // all to-do lists
-export const getToDoLists = async () => {};
+export const getToDoLists = async (req, res) => {
+  try {
+    const result = await pool.query(`SELECT * FROM todos`);
+    res.status(200).json({ data: result.rows });
+  } catch (error) {
+    console.log("Error in getToDoLists controller:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
 
 // update one to-do list
 export const updateToDoList = async () => {};
