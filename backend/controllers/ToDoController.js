@@ -43,7 +43,7 @@ export const createToDoList = async (req, res) => {
       [title, description, formattedDueDate, completed]
     );
     res.status(201).json({
-      message: "To-do list created successfully.",
+      message: "Task added successfully.",
       data: result.rows[0],
     });
   } catch (error) {
@@ -65,7 +65,7 @@ export const getToDoList = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: "To-do list not found." });
+      return res.status(404).json({ message: "Task not found." });
     }
 
     res.status(200).json({ data: result.rows[0] });
@@ -75,7 +75,7 @@ export const getToDoList = async (req, res) => {
   }
 };
 
-// all to-do lists
+// get all to-do lists
 export const getToDoLists = async (req, res) => {
   try {
     const result = await pool.query(`SELECT * FROM todos`);
@@ -87,10 +87,86 @@ export const getToDoLists = async (req, res) => {
 };
 
 // update one to-do list
-export const updateToDoList = async () => {};
+export const updateToDoList = async (req, res) => {
+  const id = req.params.id;
+  const { title, description, duedate, completed } = req.body;
+
+  try {
+    const taskExists = await pool.query(
+      `SELECT id, title, description, duedate, completed, createdAt
+          FROM todos
+          WHERE id = $1;`,
+      [id]
+    );
+
+    if (taskExists.rows.length === 0) {
+      return res.status(404).json({ message: "Task not found." });
+    }
+    const currentDate = new Date().toISOString();
+    const formattedDueDate = new Date(duedate).toISOString();
+
+    if (currentDate > formattedDueDate) {
+      return res
+        .status(400)
+        .json({ message: "Due date must be in the future." });
+    }
+
+    const result = await pool.query(
+      `UPDATE todos
+        SET title = $1, description = $2, duedate = $3, completed = $4
+        WHERE id = $5
+        RETURNING id, title, description, duedate, completed, createdAt;`,
+      [title, description, formattedDueDate, completed, id]
+    );
+
+    res.status(200).json({
+      message: "Task updated successfully.",
+      data: result.rows[0],
+    });
+  } catch (error) {
+    console.log("Error in updateToDoList controller:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
 
 // delete one to-do list
-export const removeToDoList = async () => {};
+export const removeToDoList = async (req, res) => {
+  const id = req.params.id;
 
-// create all to-do lists
-export const removeToDoLists = async () => {};
+  try {
+    const taskExists = await pool.query(
+      `SELECT id, title, description, duedate, completed, createdAt
+            FROM todos
+            WHERE id = $1;`,
+      [id]
+    );
+
+    if (taskExists.rows.length === 0) {
+      return res.status(404).json({ message: "Task not found." });
+    }
+
+    const result = await pool.query(
+      `DELETE FROM todos WHERE id = $1 RETURNING id;`,
+      [id]
+    );
+
+    res.status(200).json({
+      message: "Task deleted successfully.",
+      data: result.rows[0],
+    });
+  } catch (error) {
+    console.log("Error in removeToDoList controller:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// delete all to-do lists
+export const removeToDoLists = async (req, res) => {
+  try {
+    await pool.query(`DELETE FROM todos`);
+    res.status(200).json({ message: "All tasks deleted successfully." });
+  } catch (error) {
+    console.log("Error in removeToDoList controller:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};

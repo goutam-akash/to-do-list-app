@@ -22,7 +22,7 @@ router.get("/getall", getToDoLists);
 router.put("/update/:id", updateToDoList);
 
 // delete one to-do list
-router.delete("/remove/:id", removeToDoList);
+router.delete("/removeone/:id", removeToDoList);
 
 // delete all to-do lists
 router.delete("/remove/all", removeToDoLists);
