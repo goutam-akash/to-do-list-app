@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
-  "name": "todo-list",
-=======
   "name": "todo-app",
->>>>>>> 49918b91c11b512ebc26dd6b9c9bbcc282732675
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,27 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
-<<<<<<< HEAD
     "autoprefixer": "^10.4.20",
-    "mini-css-extract-plugin": "^2.9.2",
-=======
     "daisyui": "^4.12.14",
     "dotenv": "^16.4.5",
->>>>>>> 49918b91c11b512ebc26dd6b9c9bbcc282732675
+    "mini-css-extract-plugin": "^2.9.2",
     "next": "15.0.3",
     "pg": "^8.13.1",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106"
   },
   "devDependencies": {
-<<<<<<< HEAD
-    "@types/node": "^20.17.6",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.3",
-    "postcss": "^8.4.49",
-=======
     "@types/node": "^20",
     "@types/pg": "^8.11.10",
     "@types/react": "^18",
@@ -42,7 +27,6 @@
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "postcss": "^8.4.47",
->>>>>>> 49918b91c11b512ebc26dd6b9c9bbcc282732675
     "tailwindcss": "^3.4.14",
     "typescript": "^5"
   }
