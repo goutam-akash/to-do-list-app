@@ -42,3 +42,41 @@ export async function POST(req: Request) {
     );
   }
 }
+
+// update one task
+
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  const { task_name } = await req.json();
+
+  if (!task_name) {
+    return NextResponse.json(
+      { message: "Task name is required" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const res = await pool.query(
+      "UPDATE tasks SET task_name = $1 WHERE id = $2 RETURNING *",
+      [task_name, params.id]
+    );
+
+    if (res.rowCount === 0) {
+      return NextResponse.json({ message: "Task not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(res.rows[0]);
+  } catch (error) {
+    console.error("Error updating task:", error);
+    return NextResponse.json(
+      { message: "Failed to update task" },
+      { status: 500 }
+    );
+  }
+}
+
+
+
