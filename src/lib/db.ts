@@ -1,12 +1,14 @@
+import { Pool } from "pg";
 import dotenv from "dotenv";
+
 dotenv.config();
 
-import { Pool } from "pg";
+// Create the Pool with environment variables
 export const pool = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  port: 5432,
+  port: 5432, // Default PostgreSQL port
   database: process.env.DB_DATABASE,
 });
 
@@ -19,13 +21,20 @@ export const connectToDb = async () => {
   }
 };
 
-export const disconnectDB = async () => {
+export const disconnectDb = async () => {
   try {
     await pool.end();
     console.log("Connection closed.");
   } catch (error) {
-    console.error("Error disconnecting database", error);
+    console.error("Error disconnecting from database", error);
   }
 };
 
-connectToDb();
+export const testDbConnection = async () => {
+  try {
+    const res = await pool.query("SELECT NOW()");
+    console.log("Database connection test:", res.rows[0]);
+  } catch (error) {
+    console.error("Error during database connection test", error);
+  }
+};
