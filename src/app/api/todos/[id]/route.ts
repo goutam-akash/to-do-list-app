@@ -1,12 +1,14 @@
+// app/api/todos/[id]/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "../../../../lib/db";
 
 // PUT request to update a todo by id
 export async function PUT(
   req: NextRequest,
-  context: { params: { id: number } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await context.params; // Access `params` from `context` explicitly
+  const { id } = params; // Access `params` directly without awaiting
   const { task_name, completed } = await req.json();
 
   if (!task_name) {
@@ -39,9 +41,9 @@ export async function PUT(
 // DELETE request to delete a todo by id
 export async function DELETE(
   req: NextRequest,
-  context: { params: { id: number } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await context.params; // Access `params` from `context` explicitly
+  const { id } = params; // Access `params` directly without awaiting
 
   try {
     const res = await pool.query(
