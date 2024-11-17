@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { pool } from "../../../lib/db";
 
 // GET all list of todos
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const result = await pool.query("SELECT * FROM todos");
     return NextResponse.json(result.rows, { status: 200 });
