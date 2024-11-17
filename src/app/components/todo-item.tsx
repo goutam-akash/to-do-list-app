@@ -5,17 +5,17 @@ import { Todo } from '../interfaces/Todo';
 
 interface TodoItemProps {
   todo: Todo;
-  onToggleComplete: (id: number) => void;
+  onToggleComplete: (id: number, task_name: string) => void;
   onDelete: (id: number) => void;
   onEdit: (id: number, newText: string) => void;
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggleComplete, onDelete, onEdit }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [newText, setNewText] = useState(todo.text);
+  const [newText, setNewText] = useState(todo.task_name);
 
   const handleEdit = () => {
-    if (newText.trim() && newText !== todo.text) {
+    if (newText.trim() && newText !== todo.task_name) {
       onEdit(todo.id, newText);
       setIsEditing(false);  // Close edit mode
     }
@@ -26,7 +26,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggleComplete, onDelete, o
       <input
         type="checkbox"
         checked={todo.completed}
-        onChange={() => onToggleComplete(todo.id)}
+        onChange={() => onToggleComplete(todo.id, todo.task_name)}
         style={{ marginRight: '10px' }}
       />
       {isEditing ? (
@@ -42,15 +42,15 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggleComplete, onDelete, o
           </button>
         </div>
       ) : (
-        <span style={{ textDecoration: todo.completed ? 'line-through' : 'none', flexGrow: 1 }}>
-          {todo.text}
+          <span style={{ textDecoration: todo.completed ? 'line-through' : 'none', flexGrow: 1 }}>
+          {todo.task_name}
         </span>
       )}
       <div>
         <button onClick={() => onDelete(todo.id)} style={{ padding: '5px 10px', cursor: 'pointer', marginLeft: '5px' }}>
           Delete
         </button>
-        {!isEditing && (
+        {(!isEditing && !todo.completed)  && (
           <button
             onClick={() => setIsEditing(true)}
             style={{ padding: '5px 10px', cursor: 'pointer', marginLeft: '5px' }}

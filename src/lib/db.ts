@@ -9,9 +9,12 @@ export const pool = new Pool({
   user: 'to_do_list_psjm_user',
   password: '48q8ts1AUJzNPLJY6QAwvjIi6m8DDg8D',
   port: 5432, // Default PostgreSQL port
-  database: 'to_do_list_psjmE',
+  database: 'to_do_list_psjm',
   idleTimeoutMillis: 30000, // timeout in ms before idle connections are closed
-  connectionTimeoutMillis: 2000 // timeout for acquiring a connection
+  connectionTimeoutMillis: 2000, // timeout for acquiring a connection
+  ssl: {
+    rejectUnauthorized: false, // Accept self-signed certificates, if needed
+  }
 });
 
 export const connectToDb = async () => {

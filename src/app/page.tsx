@@ -65,14 +65,14 @@ const Home: React.FC = () => {
   };
 
   // Toggle completion status of a todo
-  const toggleComplete = async (id: number) => {
+  const toggleComplete = async (id: number, task_name: string) => {
     try {
       const response = await fetch(`/api/todos/${id}`, { // Endpoint for updating a todo
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ completed: true }), // Update completed state here
+        body: JSON.stringify({ task_name: task_name, completed: true }), // Update completed state here
       });
 
       if (!response.ok) {
@@ -90,6 +90,36 @@ const Home: React.FC = () => {
         setError('An unknown error occurred');
       }
     }
+  };
+
+  // Edit a todo via the API
+  const editTodo = async (id: number, newText: string) => {
+    try {
+      const response = await fetch(`/api/todos/${id}`, { // Endpoint for updating a todo
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ task_name: newText, completed: false }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update todo');
+      }
+
+      setTodos(
+        todos.map(todo => (todo.id === id ? { ...todo, task_name: newText } : todo))
+      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+    }
+    
+    
+    
   };
 
   // Delete a todo via the API
@@ -133,10 +163,7 @@ const Home: React.FC = () => {
             todo={todo}
             onToggleComplete={toggleComplete}
             onDelete={deleteTodo}
-            onEdit={(id: number, newText: string) => {
-              // Implement the logic for editing a todo here
-              console.log('Edit todo:', id, newText);
-            }}
+            onEdit={editTodo}
           />
         ))}
       </div>
