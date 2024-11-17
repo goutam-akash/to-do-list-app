@@ -1,63 +1,142 @@
-<<<<<<< HEAD
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Todo } from './interfaces/Todo';
 import TodoItem from './components/todo-item';
-
-let nextId = 1; // Use a stable ID counter for predictable IDs
 
 const Home: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const addTodo = () => {
+  // Fetch todos from the API when the component mounts
+  useEffect(() => {
+    const fetchTodos = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/todos'); // Replace with your API endpoint
+        if (!response.ok) {
+          throw new Error('Failed to fetch todos');
+        }
+        const data = await response.json();
+        setTodos(data);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('An unknown error occurred');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTodos();
+  }, []); // Empty dependency array to fetch only once when the component mounts
+
+  // Add a new todo via the API
+  const addTodo = async () => {
     if (newTodo.trim()) {
-      const newTodoItem = {
-        id: nextId++, // Increment `nextId` for each new todo
-        text: newTodo,
-        completed: false,
-      };
-      setTodos([...todos, newTodoItem]);
-      setNewTodo('');
+      try {
+        const response = await fetch('/api/todos', { // Adjust the endpoint to where you create todos
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ task_name: newTodo }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to add todo');
+        }
+
+        const newTodoItem = await response.json();
+        setTodos((prevTodos) => [...prevTodos, newTodoItem]);
+        setNewTodo('');
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('An unknown error occurred');
+        }
+      }
     }
   };
 
-  const toggleComplete = (id: number) => {
-    setTodos(
-      todos.map(todo =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+  // Toggle completion status of a todo
+  const toggleComplete = async (id: number) => {
+    try {
+      const response = await fetch(`/api/todos/${id}`, { // Endpoint for updating a todo
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ completed: true }), // Update completed state here
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update todo');
+      }
+
+      const updatedTodo = await response.json();
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
+      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+    }
   };
 
-  const deleteTodo = (id: number) => {
-    setTodos(todos.filter(todo => todo.id !== id));
-  };
+  // Delete a todo via the API
+  const deleteTodo = async (id: number) => {
+    try {
+      const response = await fetch(`/api/todos/${id}`, { // Endpoint for deleting a todo
+        method: 'DELETE',
+      });
 
-  const editTodo = (id: number, newText: string) => {
-    setTodos(
-      todos.map(todo => (todo.id === id ? { ...todo, text: newText } : todo))
-    );
+      if (!response.ok) {
+        throw new Error('Failed to delete todo');
+      }
+
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+    }
   };
 
   return (
     <div>
+      {loading && <p>Loading...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
       <input
         type="text"
         value={newTodo}
-        onChange={e => setNewTodo(e.target.value)}
+        onChange={(e) => setNewTodo(e.target.value)}
         placeholder="Add a new task"
       />
       <button onClick={addTodo}>Add</button>
+      
       <div>
-        {todos.map(todo => (
+        {todos.map((todo) => (
           <TodoItem
             key={todo.id}
             todo={todo}
             onToggleComplete={toggleComplete}
             onDelete={deleteTodo}
-            onEdit={editTodo}
+            onEdit={(id: number, newText: string) => {
+              // Implement the logic for editing a todo here
+              console.log('Edit todo:', id, newText);
+            }}
           />
         ))}
       </div>
@@ -66,106 +145,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-=======
-import Image from "next/image";
-
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
->>>>>>> 49918b91c11b512ebc26dd6b9c9bbcc282732675
