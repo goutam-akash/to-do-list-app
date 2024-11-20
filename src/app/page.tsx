@@ -15,6 +15,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchTodos = async () => {
       setLoading(true);
+      setError(null); 
       try {
         const response = await fetch("/api/todos"); // Replace with your API endpoint
         if (!response.ok) {
@@ -45,8 +46,9 @@ const Home: React.FC = () => {
   const addTodo = async () => {
     if (newTodo.trim()) {
       try {
-        const response = await fetch("/api/todos", {
-          method: "POST",
+        setError(null); 
+        const response = await fetch('/api/todos', { // Adjust the endpoint to where you create todos
+          method: 'POST',
           headers: {
             "Content-Type": "application/json",
           },
@@ -70,6 +72,84 @@ const Home: React.FC = () => {
     }
   };
 
+  // Toggle completion status of a todo
+  const toggleComplete = async (id: number, task_name: string) => {
+    try {
+      setError(null); 
+      const response = await fetch(`/api/todos/${id}`, { // Endpoint for updating a todo
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ task_name: task_name, completed: true }), // Update completed state here
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update todo');
+      }
+
+      const updatedTodo = await response.json();
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
+      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+    }
+  };
+
+  // Edit a todo via the API
+  const editTodo = async (id: number, newText: string) => {
+    try {
+      setError(null); 
+      const response = await fetch(`/api/todos/${id}`, { // Endpoint for updating a todo
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ task_name: newText, completed: false }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update todo');
+      }
+
+      setTodos(
+        todos.map(todo => (todo.id === id ? { ...todo, task_name: newText } : todo))
+      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+    }
+  };
+
+  // Delete a todo via the API
+  const deleteTodo = async (id: number) => {
+    try {
+      setError(null); 
+      const response = await fetch(`/api/todos/${id}`, { // Endpoint for deleting a todo
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete todo');
+      }
+
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+    }
+  };
   return (
     <div style={{ padding: '20px', backgroundColor: '#1e1e1e', minHeight: '100vh', color: '#fff' }}>
       {/* Display error message if any */}
