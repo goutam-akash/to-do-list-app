@@ -1,49 +1,61 @@
-
 /* app/globals.css */
 
 /* Global styles for body */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #000; /* Black background */
+  color: #fff; /* White text */
   margin: 0;
   padding: 0;
+  line-height: 1.6;
 }
 
 /* Styling for input fields */
 input {
   font-size: 16px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: border-color 0.3s ease;
+  padding: 10px;
+  border: 1px solid #555; /* Subtle border for contrast */
+  border-radius: 6px; /* Slightly more rounded corners */
+  background-color: #222; /* Dark background for inputs */
+  color: #fff; /* White text */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Input focus styling */
 input:focus {
-  border-color: #007BFF;
+  border-color: #ff3b3b; /* Red border on focus */
+  box-shadow: 0 0 8px rgba(255, 59, 59, 0.5); /* Glow effect */
   outline: none;
 }
 
 /* Styling for buttons */
 button {
   font-size: 16px;
-  background-color: #007BFF;
-  color: white;
+  background-color: #ff3b3b; /* Red background */
+  color: #fff; /* White text */
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 6px; /* More rounded corners */
   cursor: pointer;
   margin-left: 10px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 /* Button hover and active state styling */
 button:hover {
-  background-color: #0056b3;
+  background-color: #e60000; /* Darker red on hover */
+  transform: translateY(-2px); /* Slight lift effect */
 }
 
 button:active {
-  background-color: #004085;
+  background-color: #c00000; /* Even darker red on active */
+  transform: translateY(1px); /* Slight press-down effect */
+}
+
+/* Styling for headings */
+h1, h2, h3, h4, h5, h6 {
+  color: #ff3b3b; /* Red headings for emphasis */
+  font-family: 'Georgia', serif; /* Elegant serif font */
 }
 
 /* Responsive font size for smaller screens */
