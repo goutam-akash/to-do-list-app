@@ -14,6 +14,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchTodos = async () => {
       setLoading(true);
+      setError(null); 
       try {
         const response = await fetch('/api/todos'); // Replace with your API endpoint
         if (!response.ok) {
@@ -39,6 +40,7 @@ const Home: React.FC = () => {
   const addTodo = async () => {
     if (newTodo.trim()) {
       try {
+        setError(null); 
         const response = await fetch('/api/todos', { // Adjust the endpoint to where you create todos
           method: 'POST',
           headers: {
@@ -67,6 +69,7 @@ const Home: React.FC = () => {
   // Toggle completion status of a todo
   const toggleComplete = async (id: number, task_name: string) => {
     try {
+      setError(null); 
       const response = await fetch(`/api/todos/${id}`, { // Endpoint for updating a todo
         method: 'PUT',
         headers: {
@@ -95,6 +98,7 @@ const Home: React.FC = () => {
   // Edit a todo via the API
   const editTodo = async (id: number, newText: string) => {
     try {
+      setError(null); 
       const response = await fetch(`/api/todos/${id}`, { // Endpoint for updating a todo
         method: 'PUT',
         headers: {
@@ -125,6 +129,7 @@ const Home: React.FC = () => {
   // Delete a todo via the API
   const deleteTodo = async (id: number) => {
     try {
+      setError(null); 
       const response = await fetch(`/api/todos/${id}`, { // Endpoint for deleting a todo
         method: 'DELETE',
       });
@@ -142,12 +147,8 @@ const Home: React.FC = () => {
       }
     }
   };
-
   return (
     <div>
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
       <input
         type="text"
         value={newTodo}
@@ -156,17 +157,26 @@ const Home: React.FC = () => {
       />
       <button onClick={addTodo}>Add</button>
       
-      <div>
-        {todos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            onToggleComplete={toggleComplete}
-            onDelete={deleteTodo}
-            onEdit={editTodo}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          {error && <p style={{ color: "red" }}>{error}</p>}
+          {todos.length === 0 ? (
+            <p>No tasks available</p>
+          ) : (
+            todos.map((todo) => (
+              <TodoItem
+                key={todo.id}
+                todo={todo}
+                onToggleComplete={toggleComplete}
+                onDelete={deleteTodo}
+                onEdit={editTodo}
+              />
+            ))
+          )}
+        </>
+      )}
     </div>
   );
 };
