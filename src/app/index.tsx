@@ -5,6 +5,8 @@ import TodoItem from './components/todo-item';
 
 const Home = ({ todos }: { todos: Todo[] }) => {
   return (
+    <html>
+      <body>
     <div>
       <h1>To-do List</h1>
       <div>
@@ -18,8 +20,11 @@ const Home = ({ todos }: { todos: Todo[] }) => {
             } } />
         ))}
       </div>
+     
       {/* Add new todo here */}
     </div>
+    </body>
+    </html>
   );
 };
 

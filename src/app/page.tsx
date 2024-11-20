@@ -152,8 +152,6 @@ const Home: React.FC = () => {
   };
   return (
     <div>
-<<<<<<< HEAD
-=======
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
@@ -166,7 +164,6 @@ const Home: React.FC = () => {
       />
 
       {/* Add Todo Input */}
->>>>>>> 90d91cbb056f248a847ba438b52bc15332518a87
       <input
         type="text"
         value={newTodo}
@@ -174,29 +171,6 @@ const Home: React.FC = () => {
         placeholder="Add a new task"
       />
       <button onClick={addTodo}>Add</button>
-<<<<<<< HEAD
-      
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          {todos.length === 0 ? (
-            <p>No tasks available</p>
-          ) : (
-            todos.map((todo) => (
-              <TodoItem
-                key={todo.id}
-                todo={todo}
-                onToggleComplete={toggleComplete}
-                onDelete={deleteTodo}
-                onEdit={editTodo}
-              />
-            ))
-          )}
-        </>
-      )}
-=======
 
       {/* Todo List */}
       <div>
@@ -210,7 +184,6 @@ const Home: React.FC = () => {
           />
         ))}
       </div>
->>>>>>> 90d91cbb056f248a847ba438b52bc15332518a87
     </div>
   );
 };

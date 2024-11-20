@@ -8,7 +8,7 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params; // Access `params` directly without awaiting
+  const { id } = await params; // Access `params` directly without awaiting
   const { task_name, completed } = await req.json();
 
   if (!task_name) {
