@@ -248,9 +248,9 @@ const Home: React.FC = () => {
             <TodoItem
               key={todo.id}
               todo={todo}
-              onToggleComplete={() => {}}
-              onEdit={() => {}}
-              onDelete={() => {}}
+              onToggleComplete= {toggleComplete}
+              onEdit={editTodo}
+              onDelete={deleteTodo}
             />
           ))}
         </div>
