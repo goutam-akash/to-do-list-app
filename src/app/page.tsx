@@ -9,6 +9,7 @@ const Home: React.FC = () => {
   const [newTodo, setNewTodo] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>(''); // Added search query state
 
   // Fetch todos from the API when the component mounts
   useEffect(() => {
@@ -34,6 +35,11 @@ const Home: React.FC = () => {
 
     fetchTodos();
   }, []); // Empty dependency array to fetch only once when the component mounts
+
+  // Filter todos based on the search query
+  const filteredTodos = todos.filter(todo =>
+    todo.task_name.toLowerCase().includes(searchQuery.toLowerCase()) // Filter todos by search query
+  );
 
   // Add a new todo via the API
   const addTodo = async () => {
@@ -117,9 +123,6 @@ const Home: React.FC = () => {
         setError('An unknown error occurred');
       }
     }
-    
-    
-    
   };
 
   // Delete a todo via the API
@@ -148,6 +151,15 @@ const Home: React.FC = () => {
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
+      {/* Search Input */}
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)} // Update search query as user types
+        placeholder="Search tasks"
+      />
+
+      {/* Add Todo Input */}
       <input
         type="text"
         value={newTodo}
@@ -155,15 +167,16 @@ const Home: React.FC = () => {
         placeholder="Add a new task"
       />
       <button onClick={addTodo}>Add</button>
-      
+
+      {/* Todo List */}
       <div>
-        {todos.map((todo) => (
+        {filteredTodos.map((todo) => ( // Map over filtered todos
           <TodoItem
             key={todo.id}
             todo={todo}
-            onToggleComplete={toggleComplete}
-            onDelete={deleteTodo}
-            onEdit={editTodo}
+            onToggleComplete={toggleComplete} // Ensure toggleComplete method is implemented
+            onEdit={editTodo} // Ensure editTodo method is implemented
+            onDelete={deleteTodo} // Ensure deleteTodo method is implemented
           />
         ))}
       </div>
