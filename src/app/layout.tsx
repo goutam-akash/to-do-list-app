@@ -1,35 +1,28 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+// app/layout.tsx
 
-export const metadata: Metadata = {
-  title: "To-Do-List App",
-  description: "Your Personal Task Manager",
-};
+import React, { ReactNode } from 'react';
+import './globals.css';
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const MainLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <head>
+        <title>Todo List</title>
+        <meta name="description" content="A simple Todo List app" />
+      </head>
+      <body>
+        <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
+          <h1>Todo List</h1>
+          {children}
+        </div>
       </body>
     </html>
   );
-}
+};
+
+export default MainLayout;
