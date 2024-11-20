@@ -1,13 +1,15 @@
+// app/api/todos/[id]/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "../../../../lib/db";
 
 // PUT request to update a todo by id
 export async function PUT(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await context.params; // Access `params` from `context` explicitly
-  const { task_name } = await req.json();
+  const { id } = await params; // Access `params` directly without awaiting
+  const { task_name, completed } = await req.json();
 
   if (!task_name) {
     return NextResponse.json(
@@ -18,8 +20,8 @@ export async function PUT(
 
   try {
     const res = await pool.query(
-      "UPDATE todos SET task_name = $1 WHERE id = $2 RETURNING *",
-      [task_name, id]
+      "UPDATE todos SET task_name = $1, completed = $2 WHERE id = $3 RETURNING *",
+      [task_name, completed, id]
     );
 
     if (res.rowCount === 0) {
@@ -39,9 +41,9 @@ export async function PUT(
 // DELETE request to delete a todo by id
 export async function DELETE(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await context.params; // Access `params` from `context` explicitly
+  const { id } = params; // Access `params` directly without awaiting
 
   try {
     const res = await pool.query(
